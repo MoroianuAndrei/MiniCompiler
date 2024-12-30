@@ -116,9 +116,108 @@ public interface IBasicLanguageVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpressionList([NotNull] BasicLanguageParser.ExpressionListContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="BasicLanguageParser.expression"/>.
+	/// Visit a parse tree produced by the <c>PlusExpression</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitExpression([NotNull] BasicLanguageParser.ExpressionContext context);
+	Result VisitPlusExpression([NotNull] BasicLanguageParser.PlusExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>functionCallEx</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionCallEx([NotNull] BasicLanguageParser.FunctionCallExContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>LT</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLT([NotNull] BasicLanguageParser.LTContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>EQ</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEQ([NotNull] BasicLanguageParser.EQContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>GT</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGT([NotNull] BasicLanguageParser.GTContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>DivideExpression</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDivideExpression([NotNull] BasicLanguageParser.DivideExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Number</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNumber([NotNull] BasicLanguageParser.NumberContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>StringLiteral</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStringLiteral([NotNull] BasicLanguageParser.StringLiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>LparenRparen</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLparenRparen([NotNull] BasicLanguageParser.LparenRparenContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>MinusExpression</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMinusExpression([NotNull] BasicLanguageParser.MinusExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>NE</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNE([NotNull] BasicLanguageParser.NEContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>LE</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLE([NotNull] BasicLanguageParser.LEContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Id</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitId([NotNull] BasicLanguageParser.IdContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>TimesExpression</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTimesExpression([NotNull] BasicLanguageParser.TimesExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>GE</c>
+	/// labeled alternative in <see cref="BasicLanguageParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGE([NotNull] BasicLanguageParser.GEContext context);
 }

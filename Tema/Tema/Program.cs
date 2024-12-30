@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Tema
@@ -56,28 +57,6 @@ namespace Tema
             throw new Exception("Tipul de date nu este valid pentru adunare.");
         }
 
-
-        public override object VisitMinusExpression(BasicLanguageParser.MinusExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-            return (int)left - (int)right;
-        }
-
-        public override object VisitTimesExpression(BasicLanguageParser.TimesExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-            return (int)left * (int)right;
-        }
-
-        public override object VisitDivideExpression(BasicLanguageParser.DivideExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-            return (int)left / (int)right;
-        }
-
         // Evaluăm variabile
         public override object VisitId(BasicLanguageParser.IdContext context)
         {
@@ -122,6 +101,15 @@ namespace Tema
             var value = Visit(context.expression()); // Evaluăm expresia din partea dreaptă
             variables[varName] = value; // Atribuim valoarea în dicționarul de variabile
             return null;  // Nu returnăm niciun rezultat aici
+        }
+
+        // Evaluăm variabile globale
+        public override object VisitGlobalVar(BasicLanguageParser.GlobalVarContext context)
+        {
+            string varName = context.ID().GetText();
+            var value = Visit(context.expression());
+            variables[varName] = value; // Adăugăm variabila globală în dicționar
+            return null;
         }
     }
 

@@ -1,6 +1,6 @@
 grammar BasicLanguage;
 
-// Tokenuri
+// Lexer rules
 INT: 'int';
 FLOAT: 'float';
 DOUBLE: 'double';
@@ -9,97 +9,89 @@ VOID: 'void';
 IF: 'if';
 ELSE: 'else';
 FOR: 'for';
+WHILE: 'while';
 RETURN: 'return';
-EQUALS: '=';
+
+ID: [a-zA-Z_][a-zA-Z0-9_]*;
+NUMBER: [0-9]+ ('.' [0-9]+)?;
+STRING_LITERAL: '"' .*? '"';
+
 PLUS: '+';
 MINUS: '-';
-TIMES: '*';
-DIVIDE: '/';
+STAR: '*';
+SLASH: '/';
+MOD: '%';
+
 LT: '<';
 GT: '>';
 LE: '<=';
 GE: '>=';
 EQ: '==';
 NE: '!=';
+
+AND: '&&';
+OR: '||';
+NOT: '!';
+
+ASSIGN: '=';
+PLUS_ASSIGN: '+=';
+MINUS_ASSIGN: '-=';
+STAR_ASSIGN: '*=';
+SLASH_ASSIGN: '/=';
+MOD_ASSIGN: '%=';
+
+INCREMENT: '++';
+DECREMENT: '--';
+
 LPAREN: '(';
 RPAREN: ')';
 LBRACE: '{';
 RBRACE: '}';
 COMMA: ',';
 SEMICOLON: ';';
-STRING_LITERAL: '"' (~["\\] | '\\' .)* '"';
-NUMBER: [0-9]+ ('.' [0-9]+)?;
-ID: [a-zA-Z_][a-zA-Z0-9_]*;
 
-WS: [ \t\r\n]+ -> skip; // Ignore whitespaces
-COMMENT: '/*' .*? '*/' -> skip; // Ignore block comments
-LINE_COMMENT: '//' ~[\r\n]* -> skip; // Ignore line comments
+COMMENT: '//' ~[\r\n]* -> skip;
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+WS: [ \t\r\n]+ -> skip;
 
-// Programul principal
-program: (function | globalVar | statement)+;
-
-// Function Definition
-function:
-	type ID LPAREN paramList? RPAREN LBRACE statement+ RBRACE;
-
-// Parameter List
-paramList: type ID (COMMA type ID)*;
-
-// Global Variable Declaration
-globalVar: type ID EQUALS expression SEMICOLON;
-
-// Type (int, float, etc.)
-type: INT | FLOAT | DOUBLE | STRING | VOID;
-
-// Statement Definitions
+// Parser rules
+program: (function | declaration)* EOF;
+function: type ID LPAREN parameters? RPAREN block;
+parameters: parameter (COMMA parameter)*;
+parameter: type ID;
+declaration: type ID (ASSIGN expr)? SEMICOLON;
+block: LBRACE statement* RBRACE;
 statement:
-	declaration
-	| assignment
-	| functionCall
-	| ifStatement
+	ifStatement
 	| forStatement
+	| whileStatement
 	| returnStatement
-	| block;
-
-// Declaration (Variable Declaration)
-declaration: type ID (COMMA ID)* SEMICOLON;
-
-// Assignment (Variable Assignment)
-assignment: ID EQUALS expression SEMICOLON;
-
-// Function Call (Calling a function)
-functionCall: ID LPAREN expressionList? RPAREN SEMICOLON;
-
-// If Statement
-ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
-
-// For Statement (for initialization, condition, and increment)
+	| declaration
+	| expr SEMICOLON;
+ifStatement: IF LPAREN expr RPAREN block (ELSE block)?;
 forStatement:
-	FOR LPAREN assignment expression SEMICOLON expression RPAREN block;
+	FOR LPAREN expr? SEMICOLON expr? SEMICOLON expr? RPAREN block;
+whileStatement: WHILE LPAREN expr RPAREN block;
+returnStatement: RETURN expr? SEMICOLON;
+expr:
+	expr (PLUS | MINUS | STAR | SLASH | MOD) expr
+	| expr (LT | GT | LE | GE | EQ | NE) expr
+	| expr (AND | OR) expr
+	| NOT expr
+	| ID (
+		ASSIGN
+		| PLUS_ASSIGN
+		| MINUS_ASSIGN
+		| STAR_ASSIGN
+		| SLASH_ASSIGN
+		| MOD_ASSIGN
+	) expr
+	| ID INCREMENT
+	| ID DECREMENT
+	| LPAREN expr RPAREN
+	| NUMBER
+	| STRING_LITERAL
+	| ID;
 
-// Return Statement
-returnStatement: RETURN expression SEMICOLON;
-
-// Block (Block of statements enclosed in braces)
-block: LBRACE statement+ RBRACE;
-
-// Expression List (List of expressions for function calls)
-expressionList: expression (COMMA expression)*;
-
-// Expressions with Precedence and Associativity
-expression:
-	expression PLUS expression		# PlusExpression
-	| expression MINUS expression	# MinusExpression
-	| expression TIMES expression	# TimesExpression
-	| expression DIVIDE expression	# DivideExpression
-	| expression LT expression		# LT
-	| expression GT expression		# GT
-	| expression EQ expression		# EQ
-	| expression NE expression		# NE
-	| expression LE expression		# LE
-	| expression GE expression		# GE
-	| ID							# Id
-	| NUMBER						# Number
-	| STRING_LITERAL				# StringLiteral
-	| LPAREN expression RPAREN		# LparenRparen
-	| functionCall					# functionCallEx;
+// Types
+type: INT | FLOAT | DOUBLE | STRING | VOID;

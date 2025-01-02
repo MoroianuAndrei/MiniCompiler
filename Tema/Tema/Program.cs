@@ -1,139 +1,78 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using Antlr4.Runtime;
 
-namespace Tema
+class Program
 {
-    public class Evaluator : BasicLanguageBaseVisitor<object>
+    static void Main(string[] args)
     {
-        private readonly Dictionary<string, object> variables = new Dictionary<string, object>();
-        private readonly Dictionary<string, Func<int, int, int>> functions = new Dictionary<string, Func<int, int, int>>();
+        // Citirea programului sursă
+        string sourceFile = @"../../../program.txt";
+        string sourceCode = File.ReadAllText(sourceFile);
 
-        public Evaluator()
-        {
-            // Definim funcțiile (e.g., addIntegers, divideIntegers)
-            functions["addIntegers"] = (a, b) => a + b;
-            functions["divideIntegers"] = (a, b) => b == 0 ? 0 : a / b;
-        }
+        // Crearea lexer-ului și parser-ului
+        AntlrInputStream inputStream = new AntlrInputStream(sourceCode);
+        BasicLanguageLexer lexer = new BasicLanguageLexer(inputStream);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        BasicLanguageParser parser = new BasicLanguageParser(tokenStream);
 
-        // Vizualizează apelurile de funcții
-        public override object VisitFunctionCall(BasicLanguageParser.FunctionCallContext context)
-        {
-            string functionName = context.ID().GetText();
-            var parameters = new List<object>();
+        // Detectarea erorilor lexicale
+        lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(new ConsoleErrorListener<int>());
+        parser.RemoveErrorListeners();
+        parser.AddErrorListener(new ConsoleErrorListener<IToken>());
 
-            // Verificăm dacă funcția are parametri
-            if (context.expressionList() != null)
-            {
-                foreach (var expr in context.expressionList().expression())
-                {
-                    parameters.Add(Visit(expr));
-                }
-            }
+        // Parsarea codului
+        var tree = parser.program();
 
-            // Evaluăm funcția
-            if (functions.TryGetValue(functionName, out var func))
-            {
-                // Dacă funcția este înregistrată, o apelăm
-                return func((int)parameters[0], (int)parameters[1]);
-            }
-            else
-            {
-                throw new Exception($"Funcția {functionName} nu este definită!");
-            }
-        }
+        // Procesarea AST-ului cu Visitor-ul
+        var visitor = new BasicLanguageVisitor();
+        visitor.Visit(tree);
 
-        // Evaluăm expresiile aritmetice
-        public override object VisitPlusExpression(BasicLanguageParser.PlusExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-            if (left is int && right is int)
-            {
-                return (int)left + (int)right;
-            }
-            throw new Exception("Tipul de date nu este valid pentru adunare.");
-        }
+        // Salvarea rezultatelor
+        File.WriteAllText("tokens.txt", visitor.TokenList);
+        File.WriteAllText("variables.txt", visitor.GlobalVariables);
+        File.WriteAllText("functions.txt", visitor.Functions);
+        File.WriteAllText("control_structures.txt", visitor.ControlStructures);
 
-        // Evaluăm variabile
-        public override object VisitId(BasicLanguageParser.IdContext context)
-        {
-            string id = context.GetText();
-            if (variables.ContainsKey(id))
-            {
-                return variables[id];
-            }
-            else
-            {
-                throw new Exception($"Variabila '{id}' nu este definită în contextul curent!");
-            }
-        }
+        Console.WriteLine("Procesare completă. Rezultatele au fost salvate în fișiere.");
+    }
+}
 
-        // Evaluăm numere
-        public override object VisitNumber(BasicLanguageParser.NumberContext context)
-        {
-            return int.Parse(context.GetText());
-        }
+class BasicLanguageVisitor : BasicLanguageBaseVisitor<object>
+{
+    public string TokenList { get; private set; } = "";
+    public string GlobalVariables { get; private set; } = "";
+    public string Functions { get; private set; } = "";
+    public string ControlStructures { get; private set; } = "";
 
-        // Evaluăm stringuri
-        public override object VisitStringLiteral(BasicLanguageParser.StringLiteralContext context)
-        {
-            return context.GetText().Trim('"');
-        }
-
-        // Evaluăm blocuri de cod
-        public override object VisitBlock(BasicLanguageParser.BlockContext context)
-        {
-            object result = null;
-            foreach (var statement in context.statement())
-            {
-                result = Visit(statement);
-            }
-            return result;
-        }
-
-        // Gestionăm atribuirea valorilor
-        public override object VisitAssignment(BasicLanguageParser.AssignmentContext context)
-        {
-            string varName = context.ID().GetText();
-            var value = Visit(context.expression()); // Evaluăm expresia din partea dreaptă
-            variables[varName] = value; // Atribuim valoarea în dicționarul de variabile
-            return null;  // Nu returnăm niciun rezultat aici
-        }
-
-        // Evaluăm variabile globale
-        public override object VisitGlobalVar(BasicLanguageParser.GlobalVarContext context)
-        {
-            string varName = context.ID().GetText();
-            var value = Visit(context.expression());
-            variables[varName] = value; // Adăugăm variabila globală în dicționar
-            return null;
-        }
+    public override object VisitDeclaration(BasicLanguageParser.DeclarationContext context)
+    {
+        var type = context.type().GetText();
+        var id = context.ID().GetText();
+        var value = context.expr()?.GetText() ?? "null";
+        GlobalVariables += $"{type} {id} = {value};\n";
+        return base.VisitDeclaration(context);
     }
 
-    class Program
+    public override object VisitFunction(BasicLanguageParser.FunctionContext context)
     {
-        static void Main(string[] args)
-        {
-            // Citirea sursei dintr-un fișier
-            string sourceCode = File.ReadAllText(@"..\..\..\program.txt");
+        var returnType = context.type().GetText();
+        var functionName = context.ID().GetText();
+        Functions += $"{returnType} {functionName}(...);\n";
+        return base.VisitFunction(context);
+    }
 
-            // Lexer pentru sursa
-            var inputStream = new AntlrInputStream(sourceCode);
-            var lexer = new BasicLanguageLexer(inputStream);
-            var tokenStream = new CommonTokenStream(lexer);
+    public override object VisitIfStatement(BasicLanguageParser.IfStatementContext context)
+    {
+        var line = context.Start.Line;
+        ControlStructures += $"if-statement on line {line}\n";
+        return base.VisitIfStatement(context);
+    }
 
-            // Parser pentru sursa
-            var parser = new BasicLanguageParser(tokenStream);
-            var tree = parser.program();  // Parsează întregul program
-
-            // Creăm un evaluator
-            var evaluator = new Evaluator();
-
-            // Vizualizăm și evaluăm arborele sintactic
-            evaluator.Visit(tree);
-        }
+    public override object VisitProgram(BasicLanguageParser.ProgramContext context)
+    {
+        TokenList = string.Join("\n", context.children?.Select(c => c.GetText()) ?? new string[0]);
+        return base.VisitProgram(context);
     }
 }

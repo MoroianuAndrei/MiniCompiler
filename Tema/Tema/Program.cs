@@ -39,7 +39,7 @@ class Program
     }
 }
 
-class BasicLanguageVisitor : BasicLanguageBaseVisitor<object>
+public class BasicLanguageVisitor : BasicLanguageBaseVisitor<object>
 {
     public string TokenList { get; private set; } = "";
     public string GlobalVariables { get; private set; } = "";
@@ -55,12 +55,20 @@ class BasicLanguageVisitor : BasicLanguageBaseVisitor<object>
         return base.VisitDeclaration(context);
     }
 
-    public override object VisitFunction(BasicLanguageParser.FunctionContext context)
+    public override object VisitFunctionDecl(BasicLanguageParser.FunctionDeclContext context)
     {
         var returnType = context.type().GetText();
         var functionName = context.ID().GetText();
-        Functions += $"{returnType} {functionName}(...);\n";
-        return base.VisitFunction(context);
+
+        // Get parameters if they exist
+        var parameters = context.parameters()?.parameter()
+            .Select(p => $"{p.type().GetText()} {p.ID().GetText()}")
+            .ToList() ?? new List<string>();
+
+        var parameterString = string.Join(", ", parameters);
+        Functions += $"{returnType} {functionName}({parameterString});\n";
+
+        return base.VisitFunctionDecl(context);
     }
 
     public override object VisitIfStatement(BasicLanguageParser.IfStatementContext context)

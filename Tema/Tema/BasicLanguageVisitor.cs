@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/andre/Desktop/Facultate Informatica/Licenta/Anul 2/Semestrul 1/Limbaje Formale si Compilatoare/Tema Obligatorii/Tema 2/MiniCompiler/Tema/Tema/BasicLanguage.g4 by ANTLR 4.13.1
+// Generated from d:/MiniCompiler/Tema/Tema/BasicLanguage.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -38,11 +38,17 @@ public interface IBasicLanguageVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] BasicLanguageParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="BasicLanguageParser.function"/>.
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.functionDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitFunction([NotNull] BasicLanguageParser.FunctionContext context);
+	Result VisitFunctionDecl([NotNull] BasicLanguageParser.FunctionDeclContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.globalDeclaration"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGlobalDeclaration([NotNull] BasicLanguageParser.GlobalDeclarationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="BasicLanguageParser.parameters"/>.
 	/// </summary>
@@ -74,17 +80,41 @@ public interface IBasicLanguageVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] BasicLanguageParser.StatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="BasicLanguageParser.ifStatement"/>.
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.expressionStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitIfStatement([NotNull] BasicLanguageParser.IfStatementContext context);
+	Result VisitExpressionStatement([NotNull] BasicLanguageParser.ExpressionStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="BasicLanguageParser.forStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitForStatement([NotNull] BasicLanguageParser.ForStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.forInit"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForInit([NotNull] BasicLanguageParser.ForInitContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.forCondition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForCondition([NotNull] BasicLanguageParser.ForConditionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.forIncrement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForIncrement([NotNull] BasicLanguageParser.ForIncrementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.ifStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIfStatement([NotNull] BasicLanguageParser.IfStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="BasicLanguageParser.whileStatement"/>.
 	/// </summary>
@@ -103,6 +133,30 @@ public interface IBasicLanguageVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpr([NotNull] BasicLanguageParser.ExprContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.incrementExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIncrementExpr([NotNull] BasicLanguageParser.IncrementExprContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.functionCall"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionCall([NotNull] BasicLanguageParser.FunctionCallContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.arguments"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArguments([NotNull] BasicLanguageParser.ArgumentsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="BasicLanguageParser.literal"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLiteral([NotNull] BasicLanguageParser.LiteralContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="BasicLanguageParser.type"/>.
 	/// </summary>
